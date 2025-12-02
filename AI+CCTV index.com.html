@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Incite Gravity — AI CCTV Solution</title>
+  <style>
+    :root{--bg:#0b1220;--panel:#0f1724;--muted:#98a4b3;--accent:#00c2a8;--accent2:#6c8cff;--glass:rgba(255,255,255,0.03);}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:#e8f2fb;background:linear-gradient(180deg,#061021 0%, #071227 70%);}
+    .wrap{max-width:1200px;margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#012}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .actions{display:flex;gap:8px}
+    .btn{padding:10px 14px;border-radius:10px;border:0;background:var(--glass);color:#e8f2fb;font-weight:600;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#012;box-shadow:0 8px 28px rgba(6,18,34,0.6)}
+
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-top:18px}
+
+    /* left panel */
+    .panel{background:linear-gradient(180deg,var(--panel), rgba(11,17,27,0.85));padding:16px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+
+    .live-view{position:relative;border-radius:10px;overflow:hidden;background:#02111a;height:420px;display:flex;align-items:center;justify-content:center}
+    .camera-toolbar{position:absolute;top:10px;left:12px;display:flex;gap:8px}
+    .chip{background:rgba(255,255,255,0.04);padding:8px 10px;border-radius:999px;font-weight:700;font-size:13px}
+
+    .controls{display:flex;gap:8px;margin-top:12px}
+    .toggle{display:inline-flex;align-items:center;gap:8px}
+    .toggle input{display:none}
+    .switch{width:44px;height:24px;border-radius:999px;background:rgba(255,255,255,0.06);position:relative}
+    .knob{width:18px;height:18px;border-radius:50%;background:white;position:absolute;top:3px;left:3px;transition:all .18s}
+    input:checked + .switch{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+    input:checked + .switch .knob{left:23px;background:#012}
+
+    .sidebar .card{margin-bottom:12px}
+
+    .events{margin-top:12px;max-height:220px;overflow:auto}
+    .event{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.03)}
+    .tag{font-size:12px;color:var(--muted)}
+
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:8px 6px;text-align:left}
+
+    /* small widgets */
+    .feature-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    .feature{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px}
+
+    .controls-row{display:flex;gap:8px;align-items:center}
+    .form-row{display:flex;gap:8px;margin-top:12px}
+    input,select,textarea{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:8px;color:#e9f3f8}
+
+    /* responsive */
+    @media(max-width:900px){.grid{grid-template-columns:1fr}.live-view{height:300px}}
+
+    /* demo badge */
+    .badge{background:rgba(0,194,168,0.12);color:var(--accent);padding:6px 10px;border-radius:999px;font-weight:700}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">IG</div>
+        <div>
+          <h1>Incite Gravity — AI CCTV Platform</h1>
+          <p class="lead">Smart video analytics, real-time alerts, and scalable device management.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="settingsBtn">Settings</button>
+        <button class="btn primary" id="connectBtn">Connect Camera</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="chip">Live View</div>
+            <div class="muted" style="margin-top:6px">Camera: Warehouse - Bay 3</div>
+          </div>
+          <div class="controls-row">
+            <div class="badge">AI: Enabled</div>
+            <div style="width:12px"></div>
+            <button class="btn" id="snapshotBtn">Take Snapshot</button>
+            <button class="btn" id="recordBtn">Start Recording</button>
+          </div>
+        </div>
+
+        <div class="live-view" id="liveView">
+          <!-- simulated video canvas -->
+          <canvas id="videoCanvas" width="1280" height="720" style="max-width:100%;height:auto"></canvas>
+          <div class="camera-toolbar">
+            <div class="chip" id="fpsChip">FPS: 0</div>
+            <div class="chip" id="detectChip">Detections: 0</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <label class="toggle"><input type="checkbox" id="aiToggle" checked /><span class="switch"><span class="knob"></span></span></label>
+          <div class="muted">AI Analytics</div>
+          <div style="flex:1"></div>
+          <div class="muted">Stream URL</div>
+          <input id="streamUrl" placeholder="rtsp://camera.local/stream" style="min-width:220px" />
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:12px;align-items:flex-start;flex-wrap:wrap">
+          <div style="flex:1;min-width:260px">
+            <strong>Recent Events</strong>
+            <div class="events" id="eventsList">
+              <!-- populated by JS -->
+            </div>
+          </div>
+
+          <div style="width:320px">
+            <strong>AI Features</strong>
+            <div class="feature-list">
+              <div class="feature"><strong>Face Recognition</strong><div class="muted">Identify authorized personnel</div></div>
+              <div class="feature"><strong>Person Detection</strong><div class="muted">Real-time occupancy & counting</div></div>
+              <div class="feature"><strong>Object Left/Removed</strong><div class="muted">Detect suspicious items</div></div>
+              <div class="feature"><strong>Fire & Smoke</strong><div class="muted">Early hazards detection</div></div>
+            </div>
+            <div class="form-row">
+              <input id="threshold" type="number" min="1" max="100" value="75" />
+              <button class="btn" id="applyThreshold">Apply</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <aside class="panel sidebar">
+        <div class="card" style="padding:12px">
+          <strong>Device Manager</strong>
+          <div class="muted" style="font-size:13px;margin-top:6px">Connected: <span id="deviceCount">0</span></div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn" id="addDevice">Add Device</button>
+            <button class="btn" id="refreshDevices">Refresh</button>
+          </div>
+          <div style="margin-top:10px">
+            <table id="devicesTable">
+              <thead><tr><th>Camera</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="padding:12px">
+          <strong>Reports & Exports</strong>
+          <div class="muted" style="margin-top:6px">Generate incident reports and export snapshots.</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" id="exportReport">Export Report</button>
+            <button class="btn" id="downloadJson">Export JSON</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:12px">
+          <strong>Quick Settings</strong>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+            <label class="muted">Sensitivity</label>
+            <input id="sensitivity" type="range" min="1" max="100" value="60" />
+            <label class="muted">Alert Channel</label>
+            <select id="alertChannel"><option>Email</option><option>SMS</option><option>Webhook</option></select>
+          </div>
+        </div>
+
+        <div class="card" style="padding:12px">
+          <strong>Support</strong>
+          <div class="muted" style="margin-top:6px">Contact engineering team for integration help.</div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn" id="contactBtn">Contact</button>
+            <button class="btn" id="docsBtn">Docs</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div class="muted">© Incite Gravity — AI CCTV Platform</div>
+        <div class="muted">Version: Demo</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- connect modal -->
+  <div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;padding:20px">
+    <div style="background:linear-gradient(180deg,#071224,#051024);padding:18px;border-radius:12px;width:100%;max-width:560px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><strong>Connect Camera</strong><button class="btn" id="closeConnect">Close</button></div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+        <input id="camName" placeholder="Camera name (e.g. Warehouse Bay 3)" />
+        <input id="camUrl" placeholder="RTSP / HTTP stream URL" />
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+          <button class="btn" id="saveCam">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Demo JS: simulate camera feed, events, and device management
+    const canvas = document.getElementById('videoCanvas')
+    const ctx = canvas.getContext('2d')
+    const fpsChip = document.getElementById('fpsChip')
+    const detectChip = document.getElementById('detectChip')
+    const eventsList = document.getElementById('eventsList')
+    const devicesTableBody = document.querySelector('#devicesTable tbody')
+    const deviceCount = document.getElementById('deviceCount')
+
+    let running = true
+    let lastFrame = performance.now()
+    let frames = 0
+    let detections = 0
+    const devices = []
+
+    // draw simulated frames
+    function drawFrame(t){
+      const w = canvas.width
+      const h = canvas.height
+      // background
+      ctx.fillStyle = '#03121a'
+      ctx.fillRect(0,0,w,h)
+      // fake scene: rectangles moving
+      const tsec = t/1000
+      for(let i=0;i<6;i++){
+        const x = (Math.sin(tsec*(0.5+i*0.2)+i)*0.5+0.5)*(w-220)
+        const y = 60 + i*60
+        ctx.fillStyle = 'rgba(100,150,200,0.06)'
+        ctx.fillRect(x,y,200,48)
+        ctx.fillStyle = '#9fd3ff'
+        ctx.fillRect(x+6,y+6,80,36)
+      }
+
+      // random detection boxes when AI enabled
+      const aiEnabled = document.getElementById('aiToggle').checked
+      if(aiEnabled && Math.random() < 0.08){
+        const bx = 80 + Math.random()*(w-300)
+        const by = 60 + Math.random()*(h-160)
+        const bw = 120
+        const bh = 140
+        ctx.strokeStyle = 'rgba(0,194,168,0.95)'
+        ctx.lineWidth = 3
+        ctx.strokeRect(bx,by,bw,bh)
+        ctx.font = '18px Inter'
+        ctx.fillStyle = 'rgba(0,194,168,0.95)'
+        ctx.fillText('Person 92%', bx+6, by-8)
+        addEvent('Person detected', 'High confidence')
+        detections++
+      }
+
+      // FPS calc
+      frames++
+      if(performance.now() - lastFrame >= 1000){
+        fpsChip.textContent = 'FPS: ' + frames
+        frames = 0
+        lastFrame = performance.now()
+        detectChip.textContent = 'Detections: ' + detections
+      }
+
+      if(running) requestAnimationFrame(drawFrame)
+    }
+    requestAnimationFrame(drawFrame)
+
+    // events list
+    function addEvent(title, detail){
+      const el = document.createElement('div')
+      el.className='event'
+      el.innerHTML = `<div><strong>${title}</strong><div class="tag">${new Date().toLocaleString()}</div></div><div class="muted">${detail}</div>`
+      eventsList.prepend(el)
+      // limit
+      while(eventsList.children.length > 30) eventsList.removeChild(eventsList.lastChild)
+    }
+
+    // device manager
+    function renderDevices(){
+      devicesTableBody.innerHTML = ''
+      devices.forEach(d=>{
+        const tr = document.createElement('tr')
+        tr.innerHTML = `<td>${d.name}</td><td>${d.status}</td>`
+        devicesTableBody.appendChild(tr)
+      })
+      deviceCount.textContent = devices.length
+    }
+
+    document.getElementById('connectBtn').addEventListener('click',()=>{document.getElementById('modal').style.display='flex'})
+    document.getElementById('closeConnect').addEventListener('click',()=>{document.getElementById('modal').style.display='none'})
+    document.getElementById('saveCam').addEventListener('click',()=>{
+      const name = document.getElementById('camName').value || 'Camera '+(devices.length+1)
+      const url = document.getElementById('camUrl').value || ''
+      devices.push({name, url, status:'Connected'})
+      renderDevices()
+      document.getElementById('modal').style.display='none'
+      addEvent('Camera connected', name)
+    })
+
+    document.getElementById('addDevice').addEventListener('click',()=>{document.getElementById('modal').style.display='flex'})
+    document.getElementById('refreshDevices').addEventListener('click',()=>{renderDevices(); addEvent('Device list refreshed','')})
+
+    document.getElementById('snapshotBtn').addEventListener('click',()=>{
+      // download current canvas as image
+      const dataUrl = canvas.toDataURL('image/png')
+      const a = document.createElement('a'); a.href = dataUrl; a.download = 'snapshot.png'; document.body.appendChild(a); a.click(); a.remove();
+      addEvent('Snapshot taken','Saved locally')
+    })
+
+    document.getElementById('exportReport').addEventListener('click',()=>{
+      // simple report from events
+      const events = Array.from(eventsList.children).map(el=>({title:el.querySelector('strong').textContent, time:el.querySelector('.tag').textContent, detail:el.querySelectorAll('div')[1].textContent}))
+      const blob = new Blob([JSON.stringify(events, null, 2)],{type:'application/json'})
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='incident-report.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+      addEvent('Report exported','JSON')
+    })
+
+    document.getElementById('downloadJson').addEventListener('click',()=>{document.getElementById('exportReport').click()})
+
+    document.getElementById('applyThreshold').addEventListener('click',()=>{
+      addEvent('Threshold updated','New AI threshold applied')
+    })
+
+    document.getElementById('settingsBtn').addEventListener('click',()=>{alert('Open settings panel (demo)')})
+    document.getElementById('contactBtn').addEventListener('click',()=>{alert('Contact: support@incitegravity.io')})
+    document.getElementById('docsBtn').addEventListener('click',()=>{alert('Open documentation (demo)')})
+
+    // init demo devices
+    devices.push({name:'Warehouse Bay 3', url:'rtsp://warehouse/cam3', status:'Connected'})
+    devices.push({name:'Gate Entrance', url:'rtsp://gate/cam1', status:'Connected'})
+    renderDevices()
+    addEvent('Platform started','AI analytics running')
+  </script>
+</body>
+</html>
