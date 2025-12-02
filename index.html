@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inventory Management System | Incite Gravity</title>
+  <meta name="description" content="Incite Gravity — Inventory Management System: streamline stock, reduce stockouts, automate replenishment and gain real-time visibility across warehouses.">
+  <meta name="keywords" content="inventory management system, warehouse management, stock control, automated replenishment, Incite Gravity">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root{
+      --bg:#0f1724; /* deep blue */
+      --card:#0b1220;
+      --accent:#4f46e5; /* indigo */
+      --accent-2:#06b6d4; /* cyan */
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+      --radius:12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color-scheme: dark;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#071025 0%, #071428 60%);color:#e6eef8;line-height:1.5}
+    .container{max-width:1100px;margin:40px auto;padding:24px}
+
+    header{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--accent-2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+    .brand h1{font-size:18px;margin:0}
+    nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:14px}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;margin-top:28px}
+    .hero h2{font-size:28px;margin:0 0 12px}
+    .hero p{color:var(--muted);margin:0 0 18px}
+    .cta{display:inline-flex;gap:12px}
+    .btn{background:linear-gradient(90deg,var(--accent),#7c3aed);padding:12px 18px;border-radius:10px;color:white;text-decoration:none;font-weight:600;box-shadow:0 6px 18px rgba(79,70,229,0.12)}
+    .outline{border:1px solid rgba(255,255,255,0.06);padding:12px 18px;border-radius:10px;color:var(--muted);background:transparent}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03)}
+
+    /* features grid */
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+    .feature{padding:18px;border-radius:12px;background:var(--glass);border:1px solid rgba(255,255,255,0.02)}
+    .feature h3{margin:0 0 8px;font-size:16px}
+    .feature p{margin:0;color:var(--muted);font-size:14px}
+
+    /* two column section */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:34px}
+    .list{margin:0;padding:0;list-style:none}
+    .list li{padding:10px 0;border-bottom:1px dashed rgba(255,255,255,0.03);color:var(--muted)}
+
+    footer{margin-top:40px;padding:24px;border-top:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center}
+
+    /* responsive */
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;}
+      .features{grid-template-columns:repeat(2,1fr)}
+      .two-col{grid-template-columns:1fr}
+    }
+    @media(max-width:520px){
+      .features{grid-template-columns:1fr}
+      .brand h1{font-size:15px}
+      .hero h2{font-size:22px}
+    }
+
+    /* placeholder image style */
+    .placeholder{width:100%;height:260px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:600}
+    .small{font-size:13px;color:var(--muted)}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">IG</div>
+        <div>
+          <h1>Incite Gravity</h1>
+          <div class="small">Inventory Management System</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#benefits">Benefits</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h2>Inventory Management System that keeps your plant running</h2>
+        <p>Streamline stock control, automate replenishment and gain real-time visibility across warehouses. Designed for manufacturing environments where accuracy and uptime matter.</p>
+        <div class="cta">
+          <a class="btn" href="#contact">Request a Demo</a>
+          <a class="outline" href="/cloud-vs-on-premise-erp-what-manufacturing-leaders-need-to-know/">Read Our ERP Guide</a>
+        </div>
+
+        <div class="card" style="margin-top:20px;display:flex;gap:12px;align-items:center">
+          <div style="flex:1">
+            <div style="font-weight:700">Key Capabilities</div>
+            <div class="small">Real-time stock, multi-warehouse sync, automated reorder, batch & serial tracking.</div>
+          </div>
+          <div style="min-width:220px">
+            <div class="placeholder">Hero Image / Illustration (replaceable)</div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h3 style="margin-top:0">Why choose us</h3>
+          <p class="small">We implement inventory systems that integrate with production planning, shop-floor devices, and Business Central to reduce stockouts and improve fulfillment.</p>
+          <ul class="list" style="margin-top:12px">
+            <li>Fast integration with existing ERP</li>
+            <li>Custom rules for replenishment</li>
+            <li>Barcode & RFID support</li>
+            <li>Role-based access & audit trail</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <h3 style="margin-top:0">Get started</h3>
+          <p class="small">Schedule a free consultation to map your inventory flows and get a tailored plan.</p>
+          <a class="btn" href="#contact" style="display:inline-block;margin-top:12px">Book Consultation</a>
+        </div>
+      </aside>
+    </section>
+
+    <section id="features" class="features">
+      <div class="feature">
+        <h3>Real-time Stock Visibility</h3>
+        <p>Track inventory levels across multiple locations with live updates and alerts for low stock.</p>
+      </div>
+      <div class="feature">
+        <h3>Automated Replenishment</h3>
+        <p>Rule-based reorder points, safety stock, and vendor lead-time handling to minimise stockouts.</p>
+      </div>
+      <div class="feature">
+        <h3>Batch & Serial Tracking</h3>
+        <p>Full traceability for raw materials and finished goods to meet compliance and warranty needs.</p>
+      </div>
+    </section>
+
+    <section class="two-col" id="benefits">
+      <div class="card">
+        <h3>Business Benefits</h3>
+        <ul class="list">
+          <li>Reduced carrying costs</li>
+          <li>Improved fulfilment and on-time delivery</li>
+          <li>Lower production downtime</li>
+          <li>Clear audit trails and compliance</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Technology & Integration</h3>
+        <ul class="list">
+          <li>Integrates with Microsoft Dynamics 365 Business Central</li>
+          <li>Barcode & RFID scanners</li>
+          <li>IoT sensors and shop-floor telemetry</li>
+          <li>Secure cloud or on-premise deployment</li>
+        </ul>
+      </div>
+    </section>
+
+    <section style="margin-top:28px">
+      <div class="card">
+        <h3 style="margin-top:0">How we implement</h3>
+        <ol style="padding-left:18px;color:var(--muted)">
+          <li>Assess current inventory and processes</li>
+          <li>Design the inventory model (locations, bins, lots)</li>
+          <li>Integrate devices and automation rules</li>
+          <li>Pilot, train and roll out across plants</li>
+        </ol>
+      </div>
+    </section>
+
+    <footer id="contact">
+      <div>
+        <div style="font-weight:700">Ready to streamline inventory?</div>
+        <div class="small">Contact Incite Gravity to discuss a tailored Inventory Management System for your manufacturing operation.</div>
+      </div>
+      <div style="text-align:right">
+        <div class="small">Email: hello@incitegravity.com</div>
+        <div style="margin-top:8px"><a class="btn" href="mailto:hello@incitegravity.com">Contact Us</a></div>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
